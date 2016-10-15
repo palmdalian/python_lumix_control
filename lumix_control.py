@@ -1,6 +1,5 @@
 import requests as r
 import os
-import time
 
 class CameraControl:
 	def __init__(self, cam_ip):
@@ -12,6 +11,16 @@ class CameraControl:
 		resp = r.get(self.baseurl, params = {"mode": "camcmd", "value": "recmode"})
 		if self.check_response(resp):
 			print ("Connected")
+
+	def start_stream(self, upd_port):
+		resp = r.get(self.baseurl, params = {"mode": "startstream", "value": str(upd_port)})
+		if self.check_response(resp):
+			return True
+
+	def stop_stream(self):
+		resp = r.get(self.baseurl, params = {"mode": "stopstream"})
+		if self.check_response(resp):
+			return True
 
 	def get_info(self, setting):
 		params = {"mode": "getinfo", "type": setting}
@@ -181,22 +190,22 @@ class CameraControl:
 		
 		#Check where we are with a fine step
 		resp = self.focus_control("tele", "normal").text
-		current = int(resp.split(',')[1])
+		current_position = int(resp.split(',')[1])
 		
 		if end_point == "current":
-			end_point = current + 13
+			end_point = current_position + 13
 
 		# First get to the starting point if necessary
 		if start_point == "current":
-			start_point = current + 13
-		elif int(start_point) < current:
-			while current - int(start_point) > 13:
+			start_point = current_position + 13
+		elif int(start_point) < current_position:
+			while current_position - int(start_point) > 13:
 				resp = self.focus_control("tele", "fast").text
-				current = int(resp.split(',')[1])
+				current_position = int(resp.split(',')[1])
 		else:
-			while int(start_point) - current > 13:
+			while int(start_point) - current_position > 13:
 				resp = self.focus_control("wide", "fast").text
-				current = int(resp.split(',')[1])
+				current_position = int(resp.split(',')[1])
 
 		#At the start, now let's get to the end point
 		start_point = int(start_point)
@@ -206,18 +215,18 @@ class CameraControl:
 			threshold = 70
 
 		if start_point > int(end_point):
-			while current - int(end_point) > threshold:
+			while current_position - int(end_point) > threshold:
 				resp = self.focus_control("tele", speed).text
-				current = int(resp.split(',')[1])
-				if current - int(end_point) =< threshold:
+				current_position = int(resp.split(',')[1])
+				if current_position - int(end_point) <= threshold:
 					#Fine focus for the last bit
 					threshold = 13
 					speed = "normal"
 		else:
-			while int(end_point) - current > threshold:
+			while int(end_point) - current_position > threshold:
 				resp = self.focus_control("wide", speed).text
-				current = int(resp.split(',')[1])
-				if int(end_point) - current =< threshold:
+				current_position = int(resp.split(',')[1])
+				if int(end_point) - current_position <= threshold:
 					threshold = 13
 					speed = "normal"
 
@@ -226,8 +235,9 @@ class CameraControl:
 		if "<result>ok</result" in resp.text:
 			return True
 		else:
-			print resp.text
+			print (resp.text)
 			return False
 
 if __name__ == "__main__":
-	control = CameraControl("10.0.1.109") #IP of camera
+	IP = "10.0.1.105"
+	control = CameraControl(IP) #IP of camera
