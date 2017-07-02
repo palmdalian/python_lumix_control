@@ -230,6 +230,20 @@ class CameraControl:
 					threshold = 13
 					speed = "normal"
 
+	def capture_photo(self):
+		params = {"mode": "camcmd", "value": "capture"}
+		resp = r.get(self.baseurl, params = params)
+		return resp
+
+	def video_record_start(self):
+		params = {"mode": "camcmd", "value": "video_recstart"}
+		resp = r.get(self.baseurl, params = params)
+		return resp
+
+	def video_record_stop(self):
+		params = {"mode": "camcmd", "value": "video_recstop"}
+		resp = r.get(self.baseurl, params = params)
+		return resp
 
 	def check_response(self, resp):
 		if "<result>ok</result" in resp.text:
