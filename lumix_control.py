@@ -4,7 +4,7 @@ import os
 class CameraControl:
 	def __init__(self, cam_ip):
 		self.cam_ip = cam_ip
-		self.baseurl = os.path.join("http://", self.cam_ip, "cam.cgi")
+		self.baseurl = "http://" + self.cam_ip + "/cam.cgi"
 		self.start_camera_control()
 
 	def start_camera_control(self):
