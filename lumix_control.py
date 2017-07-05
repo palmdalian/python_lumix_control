@@ -4,7 +4,7 @@ import os
 class CameraControl:
 	def __init__(self, cam_ip):
 		self.cam_ip = cam_ip
-		self.baseurl = os.path.join("http://", self.cam_ip, "cam.cgi")
+		self.baseurl = "http://" + self.cam_ip + "/cam.cgi"
 		self.start_camera_control()
 
 	def start_camera_control(self):
@@ -230,6 +230,20 @@ class CameraControl:
 					threshold = 13
 					speed = "normal"
 
+	def capture_photo(self):
+		params = {"mode": "camcmd", "value": "capture"}
+		resp = r.get(self.baseurl, params = params)
+		return resp
+
+	def video_record_start(self):
+		params = {"mode": "camcmd", "value": "video_recstart"}
+		resp = r.get(self.baseurl, params = params)
+		return resp
+
+	def video_record_stop(self):
+		params = {"mode": "camcmd", "value": "video_recstop"}
+		resp = r.get(self.baseurl, params = params)
+		return resp
 
 	def check_response(self, resp):
 		if "<result>ok</result" in resp.text:
