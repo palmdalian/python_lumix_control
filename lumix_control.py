@@ -1,5 +1,4 @@
 import requests as r
-import os
 
 class CameraControl:
 	def __init__(self, cam_ip):
@@ -181,7 +180,7 @@ class CameraControl:
 
 	def focus_control(self, direction="tele", speed="normal"):
 		#tele or wide for direction, normal or fast for speed
-		params = {"mode": "camctrl", "type": "focus", "value": direction + "-" + speed}
+		params = {"mode": "camctrl", "type": "focus", "value": "{0}-{1}".format(direction, speed)}
 		resp = r.get(self.baseurl, params = params )
 		return resp
 
