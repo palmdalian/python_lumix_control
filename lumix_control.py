@@ -4,7 +4,7 @@ import os
 class CameraControl:
 	def __init__(self, cam_ip):
 		self.cam_ip = cam_ip
-		self.baseurl = "http://" + self.cam_ip + "/cam.cgi"
+		self.baseurl = "http://{ip}/cam.cgi".format(ip=self.cam_ip)
 		self.start_camera_control()
 
 	def start_camera_control(self):
@@ -246,7 +246,8 @@ class CameraControl:
 		return resp
 
 	def check_response(self, resp):
-		if "<result>ok</result" in resp.text:
+		# Get a 200 response even on error. Have to check <result>
+		if "<result>ok</result>" in resp.text:
 			return True
 		else:
 			print (resp.text)
